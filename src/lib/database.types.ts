@@ -233,6 +233,7 @@ export type Database = {
           group_id: string
           id: string
           model: string | null
+          outcome: string | null
           parsed_json: Json | null
           raw_text: string
           user_id: string | null
@@ -246,6 +247,7 @@ export type Database = {
           group_id: string
           id?: string
           model?: string | null
+          outcome?: string | null
           parsed_json?: Json | null
           raw_text: string
           user_id?: string | null
@@ -259,6 +261,7 @@ export type Database = {
           group_id?: string
           id?: string
           model?: string | null
+          outcome?: string | null
           parsed_json?: Json | null
           raw_text?: string
           user_id?: string | null
@@ -327,6 +330,18 @@ export type Database = {
       is_valid_timezone: { Args: { tz: string }; Returns: boolean }
       join_group: { Args: { invite_code: string }; Returns: string }
       normalize_invite_code: { Args: { raw: string }; Returns: string }
+      save_event_from_message: {
+        Args: {
+          p_all_day: boolean
+          p_end_at: string
+          p_location: string
+          p_message_id: string
+          p_participant_ids: string[]
+          p_start_at: string
+          p_title: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

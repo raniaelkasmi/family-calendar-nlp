@@ -14,7 +14,7 @@ import { formatTimezone } from '@/lib/timezones';
 
 type Member = { userId: string; role: string; displayName: string; timezone: string };
 
-export default function GroupScreen() {
+export default function MembersScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { session } = useAuth();
   const myId = session?.user.id;
@@ -105,7 +105,7 @@ export default function GroupScreen() {
           const { error } = await supabase.from('group_members').delete().eq('group_id', id).eq('user_id', myId!);
           setBusy(null);
           if (error) setError('Could not leave the group. Please try again.');
-          else router.back();
+          else router.dismissTo('/');
         },
       },
     ]);
@@ -122,7 +122,7 @@ export default function GroupScreen() {
           const { error } = await supabase.from('groups').delete().eq('id', id);
           setBusy(null);
           if (error) setError('Could not delete the group. Please try again.');
-          else router.back();
+          else router.dismissTo('/');
         },
       },
     ]);
@@ -133,20 +133,14 @@ export default function GroupScreen() {
       <Screen hasHeader>
         <Stack.Screen options={{ title: 'Group' }} />
         <ThemedText themeColor="textSecondary">This group doesn&apos;t exist or you&apos;re not a member.</ThemedText>
-        <Button title="Back to my groups" variant="secondary" onPress={() => router.back()} />
+        <Button title="Back to my groups" variant="secondary" onPress={() => router.dismissTo('/')} />
       </Screen>
     );
   }
 
   return (
     <Screen hasHeader centered={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}>
-      <Stack.Screen options={{ title: name }} />
-
-      <ThemedView type="backgroundElement" style={styles.placeholder}>
-        <ThemedText type="small" themeColor="textSecondary">
-          The shared calendar and message feed will appear here.
-        </ThemedText>
-      </ThemedView>
+      <Stack.Screen options={{ title: name ? `${name} · Members` : 'Members' }} />
 
       <ThemedText type="smallBold">
         {members.length} {members.length === 1 ? 'member' : 'members'}
@@ -176,10 +170,6 @@ export default function GroupScreen() {
 }
 
 const styles = StyleSheet.create({
-  placeholder: {
-    padding: Spacing.three,
-    borderRadius: Spacing.three,
-  },
   member: {
     gap: Spacing.half,
   },

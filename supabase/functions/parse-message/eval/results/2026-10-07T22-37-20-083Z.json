@@ -1,0 +1,1723 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "prompt_version": "v1",
+  "run_at": "2026-10-07T22:37:20.083Z",
+  "fully_correct": {
+    "ok": 38,
+    "total": 40
+  },
+  "per_field": {
+    "is_event": {
+      "ok": 38,
+      "total": 38
+    },
+    "date": {
+      "ok": 33,
+      "total": 34
+    },
+    "start_time": {
+      "ok": 26,
+      "total": 26
+    },
+    "all_day": {
+      "ok": 8,
+      "total": 8
+    },
+    "location": {
+      "ok": 6,
+      "total": 6
+    },
+    "start_at_utc": {
+      "ok": 5,
+      "total": 5
+    },
+    "participants": {
+      "ok": 6,
+      "total": 6
+    },
+    "end_date": {
+      "ok": 2,
+      "total": 2
+    },
+    "low_confidence": {
+      "ok": 1,
+      "total": 2
+    },
+    "end_time": {
+      "ok": 2,
+      "total": 2
+    }
+  },
+  "per_language": {
+    "fr": {
+      "ok": 17,
+      "total": 18
+    },
+    "en": {
+      "ok": 13,
+      "total": 14
+    },
+    "ar": {
+      "ok": 8,
+      "total": 8
+    }
+  },
+  "results": [
+    {
+      "id": "fr-01",
+      "text": "Dîner chez Sara jeudi 19h",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-08",
+        "start_time": "19:00",
+        "all_day": false,
+        "location_contains": "sara",
+        "start_at_utc": "2026-10-08T17:00:00.000Z"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "all_day": true,
+        "location": true,
+        "start_at_utc": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Dîner chez Sara",
+        "date": "2026-10-08",
+        "start_time": "19:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": "chez Sara",
+        "participants": [
+          "Rania",
+          "Sara"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Dîner chez Sara",
+        "start_at": "2026-10-08T17:00:00.000Z",
+        "end_at": "2026-10-08T18:00:00.000Z",
+        "all_day": false,
+        "location": "chez Sara",
+        "participant_ids": [
+          "id-Rania",
+          "id-Sara"
+        ]
+      },
+      "latency_ms": 1346
+    },
+    {
+      "id": "fr-02",
+      "text": "Vol de maman le 20 décembre à 14h",
+      "expect": {
+        "is_event": true,
+        "date": "2026-12-20",
+        "start_time": "14:00",
+        "all_day": false,
+        "start_at_utc": "2026-12-20T13:00:00.000Z"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "all_day": true,
+        "start_at_utc": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Vol de maman",
+        "date": "2026-12-20",
+        "start_time": "14:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Vol de maman",
+        "start_at": "2026-12-20T13:00:00.000Z",
+        "end_at": "2026-12-20T14:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1019
+    },
+    {
+      "id": "fr-03",
+      "text": "Anniversaire de Youssef le 15 novembre",
+      "expect": {
+        "is_event": true,
+        "date": "2026-11-15",
+        "all_day": true
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "all_day": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Anniversaire de Youssef",
+        "date": "2026-11-15",
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": true,
+        "location": null,
+        "participants": [
+          "Youssef"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Anniversaire de Youssef",
+        "start_at": "2026-11-15T00:00:00.000Z",
+        "end_at": "2026-11-16T00:00:00.000Z",
+        "all_day": true,
+        "location": null,
+        "participant_ids": [
+          "id-Youssef"
+        ]
+      },
+      "latency_ms": 1009
+    },
+    {
+      "id": "fr-04",
+      "text": "Cinéma demain soir avec Lina",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-08",
+        "start_time": "19:00",
+        "participants_include": [
+          "Lina"
+        ]
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "participants": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Cinéma",
+        "date": "2026-10-08",
+        "start_time": "19:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania",
+          "Lina"
+        ],
+        "confidence": 0.7,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Cinéma",
+        "start_at": "2026-10-08T17:00:00.000Z",
+        "end_at": "2026-10-08T18:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania",
+          "id-Lina"
+        ]
+      },
+      "latency_ms": 1131
+    },
+    {
+      "id": "fr-05",
+      "text": "Réunion parents-profs mardi prochain à 18h30",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-13",
+        "start_time": "18:30"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Réunion parents-profs",
+        "date": "2026-10-13",
+        "start_time": "18:30",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Réunion parents-profs",
+        "start_at": "2026-10-13T16:30:00.000Z",
+        "end_at": "2026-10-13T17:30:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1098
+    },
+    {
+      "id": "fr-06",
+      "text": "Brunch dans deux semaines",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-21"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Brunch",
+        "date": "2026-10-21",
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": true,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.7,
+        "clarification_question": "À quelle heure prévois-tu le brunch ?",
+        "language": "fr"
+      },
+      "event": {
+        "title": "Brunch",
+        "start_at": "2026-10-21T00:00:00.000Z",
+        "end_at": "2026-10-22T00:00:00.000Z",
+        "all_day": true,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 6094
+    },
+    {
+      "id": "fr-07",
+      "text": "Rendez-vous dentiste après-demain 9h15",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-09",
+        "start_time": "09:15",
+        "start_at_utc": "2026-10-09T07:15:00.000Z"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "start_at_utc": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Rendez-vous dentiste",
+        "date": "2026-10-09",
+        "start_time": "09:15",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Rendez-vous dentiste",
+        "start_at": "2026-10-09T07:15:00.000Z",
+        "end_at": "2026-10-09T08:15:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1434
+    },
+    {
+      "id": "fr-08",
+      "text": "Week-end à Lyon du 24 au 26 octobre",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-24",
+        "end_date": "2026-10-26",
+        "all_day": true,
+        "location_contains": "lyon"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "end_date": true,
+        "all_day": true,
+        "location": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Week-end à Lyon",
+        "date": "2026-10-24",
+        "start_time": null,
+        "end_date": "2026-10-26",
+        "end_time": null,
+        "all_day": true,
+        "location": "Lyon",
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Week-end à Lyon",
+        "start_at": "2026-10-24T00:00:00.000Z",
+        "end_at": "2026-10-27T00:00:00.000Z",
+        "all_day": true,
+        "location": "Lyon",
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1236
+    },
+    {
+      "id": "fr-09",
+      "text": "Match de foot de Karim samedi à 15h au stade municipal",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-10",
+        "start_time": "15:00",
+        "location_contains": "stade",
+        "participants_include": [
+          "Karim"
+        ]
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "location": true,
+        "participants": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Match de foot de Karim",
+        "date": "2026-10-10",
+        "start_time": "15:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": "stade municipal",
+        "participants": [
+          "Karim",
+          "Rania"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Match de foot de Karim",
+        "start_at": "2026-10-10T13:00:00.000Z",
+        "end_at": "2026-10-10T14:00:00.000Z",
+        "all_day": false,
+        "location": "stade municipal",
+        "participant_ids": [
+          "id-Karim",
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1170
+    },
+    {
+      "id": "fr-10",
+      "text": "Salut tout le monde, ça va ?",
+      "expect": {
+        "is_event": false
+      },
+      "checks": {
+        "is_event": true
+      },
+      "raw": {
+        "is_event": false,
+        "title": null,
+        "date": null,
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": true,
+        "location": null,
+        "participants": [],
+        "confidence": 0.1,
+        "clarification_question": "Quel événement souhaitez-vous planifier ?",
+        "language": "fr"
+      },
+      "event": null,
+      "latency_ms": 2117
+    },
+    {
+      "id": "fr-11",
+      "text": "Qui veut venir ce soir ?",
+      "expect": {
+        "low_confidence": true
+      },
+      "checks": {
+        "low_confidence": false
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Sortie ce soir",
+        "date": "2026-10-07",
+        "start_time": "19:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.6,
+        "clarification_question": "Quel est le programme de ce soir et où est-ce ?",
+        "language": "fr"
+      },
+      "event": {
+        "title": "Sortie ce soir",
+        "start_at": "2026-10-07T17:00:00.000Z",
+        "end_at": "2026-10-07T18:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1126
+    },
+    {
+      "id": "fr-12",
+      "text": "Apéro le 30 octobre à 18h",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-30",
+        "start_time": "18:00",
+        "start_at_utc": "2026-10-30T17:00:00.000Z"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "start_at_utc": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Apéro",
+        "date": "2026-10-30",
+        "start_time": "18:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Apéro",
+        "start_at": "2026-10-30T17:00:00.000Z",
+        "end_at": "2026-10-30T18:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1033
+    },
+    {
+      "id": "fr-13",
+      "text": "Pique-nique jeudi midi au parc",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-08",
+        "start_time": "12:00",
+        "location_contains": "parc"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "location": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Pique-nique au parc",
+        "date": "2026-10-08",
+        "start_time": "12:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": "parc",
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.85,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Pique-nique au parc",
+        "start_at": "2026-10-08T10:00:00.000Z",
+        "end_at": "2026-10-08T11:00:00.000Z",
+        "all_day": false,
+        "location": "parc",
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1040
+    },
+    {
+      "id": "fr-14",
+      "text": "c'était super hier soir !",
+      "expect": {
+        "is_event": false
+      },
+      "checks": {
+        "is_event": true
+      },
+      "raw": {
+        "is_event": false,
+        "title": null,
+        "date": null,
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [],
+        "confidence": 0,
+        "clarification_question": "De quel événement parles-tu ?",
+        "language": "fr"
+      },
+      "event": null,
+      "latency_ms": 1119
+    },
+    {
+      "id": "en-01",
+      "text": "Dinner at Sara's Thursday 7pm",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-08",
+        "start_time": "19:00",
+        "all_day": false
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "all_day": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Dinner at Sara's",
+        "date": "2026-10-08",
+        "start_time": "19:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": "Sara's",
+        "participants": [
+          "Rania",
+          "Sara"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Dinner at Sara's",
+        "start_at": "2026-10-08T17:00:00.000Z",
+        "end_at": "2026-10-08T18:00:00.000Z",
+        "all_day": false,
+        "location": "Sara's",
+        "participant_ids": [
+          "id-Rania",
+          "id-Sara"
+        ]
+      },
+      "latency_ms": 2051
+    },
+    {
+      "id": "en-02",
+      "text": "Mom's flight lands Dec 20 at 2pm",
+      "expect": {
+        "is_event": true,
+        "date": "2026-12-20",
+        "start_time": "14:00",
+        "start_at_utc": "2026-12-20T13:00:00.000Z"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "start_at_utc": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Mom's flight",
+        "date": "2026-12-20",
+        "start_time": "14:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Mom's flight",
+        "start_at": "2026-12-20T13:00:00.000Z",
+        "end_at": "2026-12-20T14:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1235
+    },
+    {
+      "id": "en-03",
+      "text": "Movie night next Friday at 8:30pm with Youssef and Lina",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-09",
+        "start_time": "20:30",
+        "participants_include": [
+          "Youssef",
+          "Lina"
+        ]
+      },
+      "checks": {
+        "is_event": true,
+        "date": false,
+        "start_time": true,
+        "participants": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Movie night",
+        "date": "2026-10-16",
+        "start_time": "20:30",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania",
+          "Youssef",
+          "Lina"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Movie night",
+        "start_at": "2026-10-16T18:30:00.000Z",
+        "end_at": "2026-10-16T19:30:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania",
+          "id-Youssef",
+          "id-Lina"
+        ]
+      },
+      "latency_ms": 4443
+    },
+    {
+      "id": "en-04",
+      "text": "Doctor appointment tomorrow at 10am",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-08",
+        "start_time": "10:00"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Doctor appointment",
+        "date": "2026-10-08",
+        "start_time": "10:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Doctor appointment",
+        "start_at": "2026-10-08T08:00:00.000Z",
+        "end_at": "2026-10-08T09:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1195
+    },
+    {
+      "id": "en-05",
+      "text": "Lina's graduation on November 3rd",
+      "expect": {
+        "is_event": true,
+        "date": "2026-11-03",
+        "all_day": true
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "all_day": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Lina's graduation",
+        "date": "2026-11-03",
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": true,
+        "location": null,
+        "participants": [
+          "Lina"
+        ],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Lina's graduation",
+        "start_at": "2026-11-03T00:00:00.000Z",
+        "end_at": "2026-11-04T00:00:00.000Z",
+        "all_day": true,
+        "location": null,
+        "participant_ids": [
+          "id-Lina"
+        ]
+      },
+      "latency_ms": 1128
+    },
+    {
+      "id": "en-06",
+      "text": "Team lunch in 3 days at noon",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-10",
+        "start_time": "12:00"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Team lunch",
+        "date": "2026-10-10",
+        "start_time": "12:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania",
+          "Sara",
+          "Youssef",
+          "Lina",
+          "Karim"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Team lunch",
+        "start_at": "2026-10-10T10:00:00.000Z",
+        "end_at": "2026-10-10T11:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania",
+          "id-Sara",
+          "id-Youssef",
+          "id-Lina",
+          "id-Karim"
+        ]
+      },
+      "latency_ms": 1132
+    },
+    {
+      "id": "en-07",
+      "text": "Football with Karim on Saturday from 4 to 6pm",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-10",
+        "start_time": "16:00",
+        "end_time": "18:00",
+        "participants_include": [
+          "Karim"
+        ]
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "end_time": true,
+        "participants": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Football with Karim",
+        "date": "2026-10-10",
+        "start_time": "16:00",
+        "end_date": null,
+        "end_time": "18:00",
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania",
+          "Karim"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Football with Karim",
+        "start_at": "2026-10-10T14:00:00.000Z",
+        "end_at": "2026-10-10T16:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania",
+          "id-Karim"
+        ]
+      },
+      "latency_ms": 1339
+    },
+    {
+      "id": "en-08",
+      "text": "What should we cook tonight?",
+      "expect": {
+        "is_event": false
+      },
+      "checks": {
+        "is_event": true
+      },
+      "raw": {
+        "is_event": false,
+        "title": null,
+        "date": null,
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": true,
+        "location": null,
+        "participants": [],
+        "confidence": 0.2,
+        "clarification_question": "Are you planning a cooking session or dinner tonight?",
+        "language": "en"
+      },
+      "event": null,
+      "latency_ms": 1095
+    },
+    {
+      "id": "en-09",
+      "text": "Let's meet sometime next week",
+      "expect": {
+        "low_confidence": true
+      },
+      "checks": {
+        "low_confidence": true
+      },
+      "raw": {
+        "is_event": false,
+        "title": null,
+        "date": null,
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": true,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.3,
+        "clarification_question": "What day and time next week would you like to meet?",
+        "language": "en"
+      },
+      "event": null,
+      "latency_ms": 1369
+    },
+    {
+      "id": "en-10",
+      "text": "Call grandma this evening",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-07",
+        "start_time": "19:00"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Call grandma",
+        "date": "2026-10-07",
+        "start_time": "19:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.7,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Call grandma",
+        "start_at": "2026-10-07T17:00:00.000Z",
+        "end_at": "2026-10-07T18:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1029
+    },
+    {
+      "id": "en-11",
+      "text": "Trip to Morocco from Dec 22 to Jan 3",
+      "expect": {
+        "is_event": true,
+        "date": "2026-12-22",
+        "end_date": "2027-01-03",
+        "all_day": true
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "end_date": true,
+        "all_day": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Trip to Morocco",
+        "date": "2026-12-22",
+        "start_time": null,
+        "end_date": "2027-01-03",
+        "end_time": null,
+        "all_day": true,
+        "location": "Morocco",
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Trip to Morocco",
+        "start_at": "2026-12-22T00:00:00.000Z",
+        "end_at": "2027-01-04T00:00:00.000Z",
+        "all_day": true,
+        "location": "Morocco",
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 2969
+    },
+    {
+      "id": "en-12",
+      "text": "Parent-teacher meeting on Jan 15 at 5:30pm",
+      "expect": {
+        "is_event": true,
+        "date": "2027-01-15",
+        "start_time": "17:30"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Parent-teacher meeting",
+        "date": "2027-01-15",
+        "start_time": "17:30",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Parent-teacher meeting",
+        "start_at": "2027-01-15T16:30:00.000Z",
+        "end_at": "2027-01-15T17:30:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 2772
+    },
+    {
+      "id": "en-13",
+      "text": "Everyone at my place Sunday 1pm for lunch",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-11",
+        "start_time": "13:00",
+        "participants_include": [
+          "Rania",
+          "Sara",
+          "Youssef",
+          "Lina",
+          "Karim"
+        ]
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "participants": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Lunch at Rania's",
+        "date": "2026-10-11",
+        "start_time": "13:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": "my place",
+        "participants": [
+          "Rania",
+          "Sara",
+          "Youssef",
+          "Lina",
+          "Karim"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Lunch at Rania's",
+        "start_at": "2026-10-11T11:00:00.000Z",
+        "end_at": "2026-10-11T12:00:00.000Z",
+        "all_day": false,
+        "location": "my place",
+        "participant_ids": [
+          "id-Rania",
+          "id-Sara",
+          "id-Youssef",
+          "id-Lina",
+          "id-Karim"
+        ]
+      },
+      "latency_ms": 1336
+    },
+    {
+      "id": "ar-01",
+      "text": "عشاء عند سارة يوم الخميس الساعة السابعة مساء",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-08",
+        "start_time": "19:00"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "عشاء عند سارة",
+        "date": "2026-10-08",
+        "start_time": "19:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": "عند سارة",
+        "participants": [
+          "Rania",
+          "Sara"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "ar"
+      },
+      "event": {
+        "title": "عشاء عند سارة",
+        "start_at": "2026-10-08T17:00:00.000Z",
+        "end_at": "2026-10-08T18:00:00.000Z",
+        "all_day": false,
+        "location": "عند سارة",
+        "participant_ids": [
+          "id-Rania",
+          "id-Sara"
+        ]
+      },
+      "latency_ms": 1141
+    },
+    {
+      "id": "ar-02",
+      "text": "رحلة ماما يوم 20 دجنبر الساعة 2 بعد الظهر",
+      "expect": {
+        "is_event": true,
+        "date": "2026-12-20",
+        "start_time": "14:00"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "رحلة ماما",
+        "date": "2026-12-20",
+        "start_time": "14:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "ar"
+      },
+      "event": {
+        "title": "رحلة ماما",
+        "start_at": "2026-12-20T13:00:00.000Z",
+        "end_at": "2026-12-20T14:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": []
+      },
+      "latency_ms": 1131
+    },
+    {
+      "id": "ar-03",
+      "text": "عيد ميلاد يوسف في 15 نوفمبر",
+      "expect": {
+        "is_event": true,
+        "date": "2026-11-15",
+        "all_day": true
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "all_day": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "عيد ميلاد يوسف",
+        "date": "2026-11-15",
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": true,
+        "location": null,
+        "participants": [
+          "Youssef"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "ar"
+      },
+      "event": {
+        "title": "عيد ميلاد يوسف",
+        "start_at": "2026-11-15T00:00:00.000Z",
+        "end_at": "2026-11-16T00:00:00.000Z",
+        "all_day": true,
+        "location": null,
+        "participant_ids": [
+          "id-Youssef"
+        ]
+      },
+      "latency_ms": 945
+    },
+    {
+      "id": "ar-04",
+      "text": "موعد عند الطبيب غدا الساعة ١٠:٣٠",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-08",
+        "start_time": "10:30"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "موعد عند الطبيب",
+        "date": "2026-10-08",
+        "start_time": "10:30",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "ar"
+      },
+      "event": {
+        "title": "موعد عند الطبيب",
+        "start_at": "2026-10-08T08:30:00.000Z",
+        "end_at": "2026-10-08T09:30:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1104
+    },
+    {
+      "id": "ar-05",
+      "text": "اجتماع يوم الاثنين القادم الساعة 6 مساء",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-12",
+        "start_time": "18:00"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "اجتماع",
+        "date": "2026-10-12",
+        "start_time": "18:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "ar"
+      },
+      "event": {
+        "title": "اجتماع",
+        "start_at": "2026-10-12T16:00:00.000Z",
+        "end_at": "2026-10-12T17:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 999
+    },
+    {
+      "id": "ar-06",
+      "text": "مرحبا كيف حالكم؟",
+      "expect": {
+        "is_event": false
+      },
+      "checks": {
+        "is_event": true
+      },
+      "raw": {
+        "is_event": false,
+        "title": null,
+        "date": null,
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [],
+        "confidence": 0,
+        "clarification_question": "هل هناك أي حدث أو خطة تود جدولتها؟",
+        "language": "ar"
+      },
+      "event": null,
+      "latency_ms": 1038
+    },
+    {
+      "id": "ar-07",
+      "text": "زيارة الجدة بعد أسبوعين",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-21"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "زيارة الجدة",
+        "date": "2026-10-21",
+        "start_time": null,
+        "end_date": null,
+        "end_time": null,
+        "all_day": true,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.85,
+        "clarification_question": null,
+        "language": "ar"
+      },
+      "event": {
+        "title": "زيارة الجدة",
+        "start_at": "2026-10-21T00:00:00.000Z",
+        "end_at": "2026-10-22T00:00:00.000Z",
+        "all_day": true,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1058
+    },
+    {
+      "id": "ar-08",
+      "text": "نلتقي هذا المساء مع لينا",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-07",
+        "start_time": "19:00",
+        "participants_include": [
+          "Lina"
+        ]
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "participants": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "لقاء مع لينا",
+        "date": "2026-10-07",
+        "start_time": "19:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania",
+          "Lina"
+        ],
+        "confidence": 0.7,
+        "clarification_question": null,
+        "language": "ar"
+      },
+      "event": {
+        "title": "لقاء مع لينا",
+        "start_at": "2026-10-07T17:00:00.000Z",
+        "end_at": "2026-10-07T18:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania",
+          "id-Lina"
+        ]
+      },
+      "latency_ms": 1116
+    },
+    {
+      "id": "mix-01",
+      "text": "rdv 14/11 à 16h",
+      "expect": {
+        "is_event": true,
+        "date": "2026-11-14",
+        "start_time": "16:00"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Rendez-vous",
+        "date": "2026-11-14",
+        "start_time": "16:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Rendez-vous",
+        "start_at": "2026-11-14T15:00:00.000Z",
+        "end_at": "2026-11-14T16:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1216
+    },
+    {
+      "id": "mix-02",
+      "text": "Meeting 11/14 at 4pm",
+      "expect": {
+        "is_event": true,
+        "date": "2026-11-14",
+        "start_time": "16:00"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Meeting",
+        "date": "2026-11-14",
+        "start_time": "16:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.9,
+        "clarification_question": null,
+        "language": "en"
+      },
+      "event": {
+        "title": "Meeting",
+        "start_at": "2026-11-14T15:00:00.000Z",
+        "end_at": "2026-11-14T16:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1645
+    },
+    {
+      "id": "mix-03",
+      "text": "Réveillon le 31 décembre à 20h chez Youssef",
+      "expect": {
+        "is_event": true,
+        "date": "2026-12-31",
+        "start_time": "20:00",
+        "location_contains": "youssef"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "location": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Réveillon chez Youssef",
+        "date": "2026-12-31",
+        "start_time": "20:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": "chez Youssef",
+        "participants": [
+          "Rania",
+          "Youssef"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Réveillon chez Youssef",
+        "start_at": "2026-12-31T19:00:00.000Z",
+        "end_at": "2026-12-31T20:00:00.000Z",
+        "all_day": false,
+        "location": "chez Youssef",
+        "participant_ids": [
+          "id-Rania",
+          "id-Youssef"
+        ]
+      },
+      "latency_ms": 1355
+    },
+    {
+      "id": "mix-04",
+      "text": "dîner samedi",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-10"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Dîner",
+        "date": "2026-10-10",
+        "start_time": "19:00",
+        "end_date": null,
+        "end_time": null,
+        "all_day": false,
+        "location": null,
+        "participants": [
+          "Rania"
+        ],
+        "confidence": 0.7,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Dîner",
+        "start_at": "2026-10-10T17:00:00.000Z",
+        "end_at": "2026-10-10T18:00:00.000Z",
+        "all_day": false,
+        "location": null,
+        "participant_ids": [
+          "id-Rania"
+        ]
+      },
+      "latency_ms": 1135
+    },
+    {
+      "id": "mix-05",
+      "text": "Soirée chez Karim vendredi de 20h à 1h",
+      "expect": {
+        "is_event": true,
+        "date": "2026-10-09",
+        "start_time": "20:00",
+        "end_time": "01:00",
+        "location_contains": "karim"
+      },
+      "checks": {
+        "is_event": true,
+        "date": true,
+        "start_time": true,
+        "end_time": true,
+        "location": true
+      },
+      "raw": {
+        "is_event": true,
+        "title": "Soirée chez Karim",
+        "date": "2026-10-09",
+        "start_time": "20:00",
+        "end_date": "2026-10-10",
+        "end_time": "01:00",
+        "all_day": false,
+        "location": "chez Karim",
+        "participants": [
+          "Rania",
+          "Karim"
+        ],
+        "confidence": 0.95,
+        "clarification_question": null,
+        "language": "fr"
+      },
+      "event": {
+        "title": "Soirée chez Karim",
+        "start_at": "2026-10-09T18:00:00.000Z",
+        "end_at": "2026-10-09T23:00:00.000Z",
+        "all_day": false,
+        "location": "chez Karim",
+        "participant_ids": [
+          "id-Rania",
+          "id-Karim"
+        ]
+      },
+      "latency_ms": 2558
+    }
+  ]
+}

@@ -20,6 +20,8 @@ declare
   gb uuid;  -- Bob's group
   eb uuid;  -- Bob's event in gb
   ma uuid;  -- Alice's parsed message in gb
+  mb uuid;  -- Bob's draft message in gb
+  saved uuid;
   ib text;  -- Bob's valid invite code
   ix text;  -- an expired invite code for gb
   gid uuid;
@@ -51,11 +53,13 @@ begin
   set local role authenticated;
   insert into public.groups (name) values ('Bob family') returning id into gb;
   insert into public.events (group_id, title, start_at) values (gb, 'Bob dinner', now()) returning id into eb;
-  insert into public.parsed_messages (group_id, raw_text) values (gb, 'dinner tomorrow 8pm');
   insert into public.group_invites (group_id) values (gb) returning code into ib;
   reset role;
   insert into public.group_invites (group_id, created_by, expires_at)
   values (gb, bob, now() - interval '1 minute') returning code into ix;
+  -- Messages are written by the Edge Function (service role), so as admin here.
+  insert into public.parsed_messages (group_id, user_id, raw_text)
+  values (gb, bob, 'dinner tomorrow 8pm') returning id into mb;
 
   names := array_append(names, 'group creator becomes owner automatically');
   passes := passes || exists (select 1 from public.group_members
@@ -175,8 +179,24 @@ begin
   names := array_append(names, 'member (not owner) cannot delete the group');
   passes := passes || (n = 0);
 
-  insert into public.parsed_messages (group_id, raw_text, parsed_json)
-  values (gb, 'lunch friday', '{"title":"Lunch"}') returning id into ma;
+  ok := false;
+  begin
+    insert into public.parsed_messages (group_id, user_id, raw_text) values (gb, alice, 'fake');
+  exception when insufficient_privilege then ok := true;
+  end;
+  names := array_append(names, 'users cannot insert messages directly (only the Edge Function)');
+  passes := passes || ok;
+
+  names := array_append(names, 'a member cannot see someone else''s draft');
+  passes := passes || not exists (select 1 from public.parsed_messages where id = mb);
+
+  reset role;
+  insert into public.parsed_messages (group_id, user_id, raw_text, parsed_json)
+  values (gb, alice, 'lunch friday 12:30', jsonb_build_object('normalized', jsonb_build_object(
+    'title', 'Lunch', 'start_at', '2030-01-04T11:30:00Z', 'end_at', '2030-01-04T12:30:00Z',
+    'all_day', false, 'location', null, 'participant_ids', jsonb_build_array(bob))))
+  returning id into ma;
+  set local role authenticated;  -- claims still Alice
 
   ok := false;
   begin
@@ -186,10 +206,37 @@ begin
   names := array_append(names, 'model output (parsed_json) is read-only after insert');
   passes := passes || ok;
 
-  update public.parsed_messages set was_corrected = true, corrected_json = '{"title":"Lunch!"}' where id = ma;
+  ok := false;
+  begin
+    perform public.save_event_from_message(mb, 'stolen', now(), null, false, null, null);
+  exception when no_data_found then ok := true;
+  end;
+  names := array_append(names, 'cannot save someone else''s draft');
+  passes := passes || ok;
+
+  saved := public.save_event_from_message(ma, 'Lunch with Bob', '2030-01-04T11:30:00Z',
+    '2030-01-04T12:30:00Z', false, null, array[bob]);
+  names := array_append(names, 'saving a draft creates the event, participants and correction label');
+  passes := passes || (
+    exists (select 1 from public.events where id = saved and title = 'Lunch with Bob')
+    and exists (select 1 from public.event_participants where event_id = saved and user_id = bob)
+    and exists (select 1 from public.parsed_messages where id = ma and event_id = saved
+      and outcome = 'saved' and was_corrected
+      and corrected_json -> 'corrected_fields' = '["title"]'::jsonb));
+
+  ok := false;
+  begin
+    perform public.save_event_from_message(ma, 'again', now(), null, false, null, null);
+  exception when no_data_found then ok := true;
+  end;
+  names := array_append(names, 'a draft can only be saved once');
+  passes := passes || ok;
+
+  update public.parsed_messages set outcome = 'discarded' where id = ma;
   get diagnostics n = row_count;
-  names := array_append(names, 'author can record a correction on own message');
+  names := array_append(names, 'author can update the outcome of own message');
   passes := passes || (n = 1);
+  update public.parsed_messages set outcome = 'saved' where id = ma;
 
   delete from public.group_members where group_id = gb and user_id = alice;
   get diagnostics n = row_count;
@@ -204,6 +251,9 @@ begin
   get diagnostics n = row_count;
   names := array_append(names, 'owner cannot leave (only delete the group)');
   passes := passes || (n = 0);
+
+  names := array_append(names, 'group members see saved messages from others');
+  passes := passes || exists (select 1 from public.parsed_messages where id = ma);
   reset role;
 
   -- ---------------------------------------------------------------- cleanup (admin)

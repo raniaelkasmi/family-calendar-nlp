@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@expo/ui": "~57.0.22",
+    "@react-native-community/datetimepicker": "9.1.0",
     "@supabase/supabase-js": "^2.117.3",
     "eslint-config-expo": "~57.0.2",
     "expo": "~57.0.27",
@@ -47,7 +48,10 @@
     "typecheck": "tsc --noEmit",
     "db:push": "supabase db push",
     "db:types": "supabase gen types typescript --linked > src/lib/database.types.ts",
-    "db:test": "supabase db query --linked -f supabase/tests/rls_check.sql"
+    "db:test": "supabase db query --linked -f supabase/tests/rls_check.sql",
+    "test:parser": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test supabase/functions/parse-message/parse.test.ts",
+    "eval": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON supabase/functions/parse-message/eval/run.ts",
+    "functions:deploy": "supabase functions deploy parse-message --use-api"
   },
   "private": true
 }

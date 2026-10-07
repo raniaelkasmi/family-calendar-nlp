@@ -15,6 +15,6 @@ A shared calendar for family and friends, where you type plans in plain language
 ## Status
 - [x] Phase 1: setup, schema with RLS, authentication
 - [x] Phase 2: groups and invitations
-- [ ] Phase 3: natural-language parsing (Edge Function + Gemini)
+- [x] Phase 3: natural-language parsing (Edge Function + Gemini)
 - [ ] Phase 4: real-time shared calendar
 - [ ] Phase 5: find a common time slot
