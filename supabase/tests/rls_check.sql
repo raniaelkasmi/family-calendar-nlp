@@ -20,6 +20,9 @@ declare
   gb uuid;  -- Bob's group
   eb uuid;  -- Bob's event in gb
   ma uuid;  -- Alice's parsed message in gb
+  ib text;  -- Bob's valid invite code
+  ix text;  -- an expired invite code for gb
+  gid uuid;
   n int;
   ok boolean;
   names  text[]    := '{}';
@@ -49,8 +52,10 @@ begin
   insert into public.groups (name) values ('Bob family') returning id into gb;
   insert into public.events (group_id, title, start_at) values (gb, 'Bob dinner', now()) returning id into eb;
   insert into public.parsed_messages (group_id, raw_text) values (gb, 'dinner tomorrow 8pm');
-  insert into public.group_invites (group_id) values (gb);
+  insert into public.group_invites (group_id) values (gb) returning code into ib;
   reset role;
+  insert into public.group_invites (group_id, created_by, expires_at)
+  values (gb, bob, now() - interval '1 minute') returning code into ix;
 
   names := array_append(names, 'group creator becomes owner automatically');
   passes := passes || exists (select 1 from public.group_members
@@ -110,12 +115,46 @@ begin
   end;
   names := array_append(names, 'logged-out client has no table access');
   passes := passes || ok;
+
+  ok := false;
+  begin
+    perform public.join_group(ib);
+  exception when insufficient_privilege then ok := true;
+  end;
+  names := array_append(names, 'logged-out client cannot use an invite');
+  passes := passes || ok;
   reset role;
 
-  -- ---------------------------------------------------------------- Alice joins Bob's group
-  insert into public.group_members (group_id, user_id) values (gb, alice);
-
+  -- ---------------------------------------------------------------- Alice joins Bob's group with the invite
   set local role authenticated;  -- claims still Alice
+
+  names := array_append(names, 'invite preview: unknown and expired codes reveal nothing');
+  passes := passes || (not exists (select 1 from public.invite_preview('0123456789abcdef'))
+    and not exists (select 1 from public.invite_preview(ix)));
+
+  names := array_append(names, 'invite preview: valid code (any format) shows group name and size');
+  passes := passes || exists (select 1 from public.invite_preview(
+      upper(substr(ib, 1, 4) || '-' || substr(ib, 5, 4) || ' ' || substr(ib, 9, 4) || '-' || substr(ib, 13, 4)))
+    where group_name = 'Bob family' and member_count = 1 and not already_member);
+
+  ok := false;
+  begin
+    perform public.join_group(ix);
+  exception when no_data_found then ok := true;
+  end;
+  names := array_append(names, 'expired invite code is refused');
+  passes := passes || (ok and not exists (select 1 from public.groups where id = gb));
+
+  gid := public.join_group(ib);
+  names := array_append(names, 'valid invite code joins the group as a member');
+  passes := passes || (gid = gb and exists (select 1 from public.group_members
+    where group_id = gb and user_id = alice and role = 'member'));
+
+  gid := public.join_group(ib);
+  names := array_append(names, 'joining twice is harmless');
+  passes := passes || (gid = gb and (select count(*) from public.group_members
+    where group_id = gb and user_id = alice) = 1);
+
   names := array_append(names, 'member sees the group, its events and group mates');
   passes := passes || (exists (select 1 from public.groups where id = gb)
     and exists (select 1 from public.events where id = eb)
@@ -156,6 +195,15 @@ begin
   get diagnostics n = row_count;
   names := array_append(names, 'member can leave a group');
   passes := passes || (n = 1);
+  reset role;
+
+  -- ---------------------------------------------------------------- Bob (owner) tries to leave
+  perform set_config('request.jwt.claims', json_build_object('sub', bob, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  delete from public.group_members where group_id = gb and user_id = bob;
+  get diagnostics n = row_count;
+  names := array_append(names, 'owner cannot leave (only delete the group)');
+  passes := passes || (n = 0);
   reset role;
 
   -- ---------------------------------------------------------------- cleanup (admin)

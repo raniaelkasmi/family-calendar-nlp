@@ -314,7 +314,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      invite_preview: {
+        Args: { invite_code: string }
+        Returns: {
+          already_member: boolean
+          expires_at: string
+          group_id: string
+          group_name: string
+          member_count: number
+        }[]
+      }
       is_valid_timezone: { Args: { tz: string }; Returns: boolean }
+      join_group: { Args: { invite_code: string }; Returns: string }
+      normalize_invite_code: { Args: { raw: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
