@@ -41,3 +41,14 @@ example
 # generated native folders
 /ios
 /android
+
+# secrets — never commit (.env.example is the template)
+.env
+.env.*
+!.env.example
+
+# supabase CLI
+supabase/.temp/
+supabase/.branches/
+supabase/.env
+supabase/functions/.env

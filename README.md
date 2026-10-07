@@ -1,56 +1,20 @@
-# Welcome to your Expo app 👋
+# Agenda Proches
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A shared calendar for family and friends, where you type plans in plain language ("dinner at Sara's Thursday 7pm") and an LLM turns them into events.
 
-## Get started
+**Stack**: React Native (Expo, TypeScript) · Supabase (Postgres + Row Level Security, Auth, Realtime, Edge Functions) · Gemini.
 
-1. Install dependencies
+**Data science angle**: every message is stored with the model's parse and the user's correction, which builds a labeled dataset for measuring parsing accuracy across languages (FR/EN/AR) and relative-date expressions.
 
-   ```bash
-   npm install
-   ```
+## Run it locally
+1. `npm install`
+2. `cp .env.example .env` and fill in your Supabase project URL and publishable key.
+3. `npx supabase link --project-ref <your-ref>` then `npm run db:push`.
+4. `npx expo start` and scan the QR code with Expo Go.
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Status
+- [x] Phase 1: setup, schema with RLS, authentication
+- [ ] Phase 2: groups and invitations
+- [ ] Phase 3: natural-language parsing (Edge Function + Gemini)
+- [ ] Phase 4: real-time shared calendar
+- [ ] Phase 5: find a common time slot
