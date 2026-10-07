@@ -1,4 +1,4 @@
-import { Link, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { Link, router, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
@@ -15,6 +15,8 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { EventDraftCard } from '@/components/event-draft-card';
 import { ErrorText } from '@/components/form';
+import { GroupCalendar } from '@/components/group-calendar';
+import { Segmented } from '@/components/segmented';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
@@ -23,9 +25,11 @@ import { useAuth } from '@/lib/auth-context';
 import { formatEventWhen } from '@/lib/datetime';
 import { requestParse, type ParseResponse } from '@/lib/parse-message';
 import { supabase } from '@/lib/supabase';
+import { useGroupRealtime } from '@/lib/use-group-realtime';
 
 type FeedItem = {
   id: string;
+  eventId: string;
   rawText: string;
   author: string;
   event: { title: string; start_at: string; end_at: string | null; all_day: boolean; location: string | null };
@@ -49,6 +53,9 @@ export default function GroupFeedScreen() {
   const [sending, setSending] = useState(false);
   const [draft, setDraft] = useState<ParseResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [view, setView] = useState<'feed' | 'calendar'>('feed');
+  // Bumped on every live change so the calendar reloads too.
+  const [version, setVersion] = useState(0);
 
   const load = useCallback(async () => {
     const [groupRes, membersRes, feedRes] = await Promise.all([
@@ -57,7 +64,9 @@ export default function GroupFeedScreen() {
       // RLS returns saved messages from everyone (drafts stay private).
       supabase
         .from('parsed_messages')
-        .select('id, raw_text, author:profiles(display_name), event:events(title, start_at, end_at, all_day, location)')
+        .select(
+          'id, event_id, raw_text, author:profiles(display_name), event:events(title, start_at, end_at, all_day, location)',
+        )
         .eq('group_id', id)
         .not('event_id', 'is', null)
         .order('created_at', { ascending: false })
@@ -76,7 +85,17 @@ export default function GroupFeedScreen() {
     );
     setItems(
       feedRes.data.flatMap((m) =>
-        m.event ? [{ id: m.id, rawText: m.raw_text, author: m.author?.display_name ?? 'Someone', event: m.event }] : [],
+        m.event && m.event_id
+          ? [
+              {
+                id: m.id,
+                eventId: m.event_id,
+                rawText: m.raw_text,
+                author: m.author?.display_name ?? 'Someone',
+                event: m.event,
+              },
+            ]
+          : [],
       ),
     );
   }, [id]);
@@ -84,8 +103,15 @@ export default function GroupFeedScreen() {
   useFocusEffect(
     useCallback(() => {
       load();
+      setVersion((v) => v + 1);
     }, [load]),
   );
+
+  // Live updates: any member saving, editing or deleting an event.
+  useGroupRealtime(id, () => {
+    load();
+    setVersion((v) => v + 1);
+  });
 
   async function send() {
     const message = text.trim();
@@ -124,82 +150,99 @@ export default function GroupFeedScreen() {
           ),
         }}
       />
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + IOS_HEADER_HEIGHT : 0}>
-        {items && items.length === 0 ? (
-          <ThemedView style={styles.empty}>
-            <ThemedText type="smallBold">Nothing planned yet</ThemedText>
-            <ThemedText themeColor="textSecondary">
-              Write a plan the way you&apos;d say it, in French, English or Arabic: &quot;Dinner at Sara&apos;s Thursday
-              7pm&quot;, &quot;Vol de maman le 20 décembre à 14h&quot;.
-            </ThemedText>
-          </ThemedView>
-        ) : (
-          // Inverted: newest at the bottom, next to the input, like a chat.
-          <FlatList
-            inverted
-            data={items ?? []}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.list}
-            renderItem={({ item }) => (
-              <ThemedView type="backgroundElement" style={styles.item}>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {item.author}: “{item.rawText}”
-                </ThemedText>
-                <ThemedText type="smallBold" style={styles.itemTitle}>
-                  {item.event.title}
-                </ThemedText>
-                <ThemedText type="small">{formatEventWhen(item.event, timeZone)}</ThemedText>
-                {item.event.location && (
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {item.event.location}
-                  </ThemedText>
-                )}
+      <ThemedView style={styles.switcher}>
+        <Segmented
+          options={[
+            { value: 'feed', label: 'Feed' },
+            { value: 'calendar', label: 'Calendar' },
+          ]}
+          value={view}
+          onChange={setView}
+        />
+      </ThemedView>
+
+      {view === 'calendar' ? (
+        <GroupCalendar groupId={id} timeZone={timeZone} version={version} />
+      ) : (
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + IOS_HEADER_HEIGHT : 0}>
+          {items && items.length === 0 ? (
+            <ThemedView style={styles.empty}>
+              <ThemedText type="smallBold">Nothing planned yet</ThemedText>
+              <ThemedText themeColor="textSecondary">
+                Write a plan the way you&apos;d say it, in French, English or Arabic: &quot;Dinner at Sara&apos;s
+                Thursday 7pm&quot;, &quot;Vol de maman le 20 décembre à 14h&quot;.
+              </ThemedText>
+            </ThemedView>
+          ) : (
+            // Inverted: newest at the bottom, next to the input, like a chat.
+            <FlatList
+              inverted
+              data={items ?? []}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={styles.list}
+              renderItem={({ item }) => (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() =>
+                    router.push({ pathname: '/groups/[id]/events/[eventId]', params: { id, eventId: item.eventId } })
+                  }>
+                  <ThemedView type="backgroundElement" style={styles.item}>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      {item.author}: “{item.rawText}”
+                    </ThemedText>
+                    <ThemedText type="smallBold" style={styles.itemTitle}>
+                      {item.event.title}
+                    </ThemedText>
+                    <ThemedText type="small">{formatEventWhen(item.event, timeZone)}</ThemedText>
+                    {item.event.location && (
+                      <ThemedText type="small" themeColor="textSecondary">
+                        {item.event.location}
+                      </ThemedText>
+                    )}
+                  </ThemedView>
+                </Pressable>
+              )}
+            />
+          )}
+
+          <SafeAreaView edges={['bottom']}>
+            {error && (
+              <ThemedView style={styles.errorRow}>
+                <ErrorText message={error} />
               </ThemedView>
             )}
-          />
-        )}
-
-        <SafeAreaView edges={['bottom']}>
-          {error && (
-            <ThemedView style={styles.errorRow}>
-              <ErrorText message={error} />
+            <ThemedView style={[styles.inputBar, { borderTopColor: theme.border }]}>
+              <TextInput
+                value={text}
+                onChangeText={setText}
+                placeholder="Write a plan…"
+                placeholderTextColor={theme.textSecondary}
+                multiline
+                maxLength={500}
+                editable={!sending}
+                style={[styles.input, { color: theme.text, backgroundColor: theme.backgroundElement }]}
+              />
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Send"
+                onPress={send}
+                disabled={sending || !text.trim()}
+                style={[styles.send, { backgroundColor: theme.primary }, (!text.trim() || sending) && styles.disabled]}>
+                {sending ? (
+                  <ActivityIndicator color={theme.onPrimary} />
+                ) : (
+                  <ThemedText style={{ color: theme.onPrimary }}>Send</ThemedText>
+                )}
+              </Pressable>
             </ThemedView>
-          )}
-          <ThemedView style={[styles.inputBar, { borderTopColor: theme.border }]}>
-            <TextInput
-              value={text}
-              onChangeText={setText}
-              placeholder="Write a plan…"
-              placeholderTextColor={theme.textSecondary}
-              multiline
-              maxLength={500}
-              editable={!sending}
-              style={[styles.input, { color: theme.text, backgroundColor: theme.backgroundElement }]}
-            />
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Send"
-              onPress={send}
-              disabled={sending || !text.trim()}
-              style={[styles.send, { backgroundColor: theme.primary }, (!text.trim() || sending) && styles.disabled]}>
-              {sending ? (
-                <ActivityIndicator color={theme.onPrimary} />
-              ) : (
-                <ThemedText style={{ color: theme.onPrimary }}>Send</ThemedText>
-              )}
-            </Pressable>
-          </ThemedView>
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+          </SafeAreaView>
+        </KeyboardAvoidingView>
+      )}
 
-      <Modal
-        visible={draft !== null}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={dismissDraft}>
+      <Modal visible={draft !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={dismissDraft}>
         <ThemedView style={styles.flex}>
           <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
             <ScrollView contentContainerStyle={styles.sheet} keyboardShouldPersistTaps="handled">
@@ -232,6 +275,10 @@ export default function GroupFeedScreen() {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
+  },
+  switcher: {
+    paddingHorizontal: Spacing.three,
+    paddingTop: Spacing.two,
   },
   empty: {
     flex: 1,

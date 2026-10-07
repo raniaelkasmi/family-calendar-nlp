@@ -14,6 +14,7 @@ import { DEFAULT_MODEL, parseMessage, PROMPT_VERSION, type Member, type ParseRes
 type Expect = {
   is_event?: boolean;
   date?: string;
+  date_any_of?: string[]; // ambiguous by design: any of these dates is acceptable
   start_time?: string;
   end_date?: string;
   end_time?: string;
@@ -54,6 +55,7 @@ function score(expect: Expect, r: ParseResult): Record<string, boolean> {
   const checks: Record<string, boolean> = {};
   if (expect.is_event !== undefined) checks.is_event = raw.is_event === expect.is_event;
   if (expect.date !== undefined) checks.date = raw.date === expect.date;
+  if (expect.date_any_of !== undefined) checks.date = expect.date_any_of.includes(raw.date ?? '');
   if (expect.start_time !== undefined) checks.start_time = raw.start_time === expect.start_time;
   if (expect.end_date !== undefined) checks.end_date = raw.end_date === expect.end_date;
   if (expect.end_time !== undefined) checks.end_time = raw.end_time === expect.end_time;

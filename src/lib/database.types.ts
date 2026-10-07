@@ -342,6 +342,18 @@ export type Database = {
         }
         Returns: string
       }
+      update_event: {
+        Args: {
+          p_all_day: boolean
+          p_end_at: string
+          p_event_id: string
+          p_location: string
+          p_participant_ids: string[]
+          p_start_at: string
+          p_title: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

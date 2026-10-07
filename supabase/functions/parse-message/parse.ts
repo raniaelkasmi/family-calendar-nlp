@@ -5,7 +5,7 @@
 import { addDays, dateToUtcMidnight, utcToWall, wallToUtc } from '../_shared/zoned-time.ts';
 
 /** Bump when the prompt or normalization rules change, to compare versions in the dataset. */
-export const PROMPT_VERSION = 'v1';
+export const PROMPT_VERSION = 'v2';
 
 /** Free tier: Flash-Lite has a usable daily quota (Flash: 20 requests/day). Override with GEMINI_MODEL. */
 export const DEFAULT_MODEL = 'gemini-flash-lite-latest';
@@ -68,7 +68,8 @@ title: short (max 6 words), in the language of the message, without the date or 
 
 date: the local start date, YYYY-MM-DD. Use the "calendar" in the context to resolve:
 - today / aujourd'hui / اليوم, tonight / ce soir / هذا المساء → today. tomorrow / demain / غدا → +1 day. after tomorrow / après-demain / بعد غد → +2 days.
-- A weekday name, with or without next / prochain / القادم, means the first such day strictly after today.
+- A weekday name means the first such day strictly after today.
+- "next <weekday>" / "<weekday> prochain" / "<weekday> القادم" is ambiguous when that first such day falls in the same Monday–Sunday week as today (it could also mean the following week). In that case, still use the first such day, but set confidence to at most 0.55 and ask in clarification_question which of the two dates is meant (give both dates). If the first such day is already in the next Monday–Sunday week, it is not ambiguous.
 - this weekend / ce week-end → the coming Saturday.
 - in N days / dans N jours / بعد N أيام → today + N days. in N weeks → today + 7×N days.
 - A date without a year → its next occurrence (this year if not passed yet, otherwise next year).

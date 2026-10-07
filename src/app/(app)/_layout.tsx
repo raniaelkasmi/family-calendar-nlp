@@ -23,6 +23,7 @@ export default function AppLayout() {
       <Stack.Screen name="groups/new" options={{ title: 'New group', presentation: 'modal' }} />
       <Stack.Screen name="groups/[id]/index" options={{ title: '' }} />
       <Stack.Screen name="groups/[id]/members" options={{ title: 'Members' }} />
+      <Stack.Screen name="groups/[id]/events/[eventId]" options={{ title: 'Event' }} />
       <Stack.Screen name="join/index" options={{ title: 'Join a group', presentation: 'modal' }} />
       <Stack.Screen name="join/[code]" options={{ title: 'Invitation' }} />
     </Stack>

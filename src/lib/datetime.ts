@@ -1,4 +1,10 @@
 // Date helpers for the app. Timezone math is shared with the Edge Function.
+import {
+  addDays as plusDays,
+  dateToUtcMidnight as dayToUtc,
+  utcMidnightToDate as utcToDay,
+  utcToWall as toWall,
+} from '../../supabase/functions/_shared/zoned-time';
 export {
   addDays,
   dateToUtcMidnight,
@@ -42,4 +48,48 @@ export function formatEventWhen(
   return sameDay
     ? `${formatDay(start, tz)} · ${formatTime(start, tz)}–${formatTime(end, tz)}`
     : `${formatDay(start, tz)} ${formatTime(start, tz)} – ${formatDay(end, tz)} ${formatTime(end, tz)}`;
+}
+
+// ----------------------------------------------------------------------------- calendar days
+// A "day" is a YYYY-MM-DD string in the viewer's timezone.
+
+/** Today in the given timezone. */
+export function todayIn(timeZone: string) {
+  return toWall(new Date(), timeZone).date;
+}
+
+/** The Monday of the week containing `day`. */
+export function mondayOf(day: string) {
+  const weekday = dayToUtc(day).getUTCDay(); // 0 = Sunday
+  return plusDays(day, -((weekday + 6) % 7));
+}
+
+/** "Thursday 8 October" for a day header. */
+export function formatDayHeader(day: string) {
+  return dayToUtc(day).toLocaleDateString(undefined, {
+    timeZone: 'UTC',
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+}
+
+/** "5 – 11 Oct" for a week starting on `monday`. */
+export function formatWeekRange(monday: string) {
+  const fmt = (d: string) => dayToUtc(d).toLocaleDateString(undefined, { timeZone: 'UTC', day: 'numeric', month: 'short' });
+  return `${fmt(monday)} – ${fmt(plusDays(monday, 6))}`;
+}
+
+/**
+ * The viewer's days an event appears on. All-day events cover each of their
+ * dates; timed events appear on the day they start in the viewer's timezone.
+ */
+export function eventDays(event: { start_at: string; end_at: string | null; all_day: boolean }, timeZone: string) {
+  const start = new Date(event.start_at);
+  if (!event.all_day) return [toWall(start, timeZone).date];
+  const first = utcToDay(start);
+  const lastExclusive = event.end_at ? utcToDay(new Date(event.end_at)) : plusDays(first, 1);
+  const days: string[] = [];
+  for (let d = first; d < lastExclusive && days.length < 366; d = plusDays(d, 1)) days.push(d);
+  return days.length ? days : [first];
 }

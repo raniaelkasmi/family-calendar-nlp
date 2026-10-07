@@ -27,6 +27,13 @@ declare
   gid uuid;
   n int;
   ok boolean;
+  -- Realtime creates realtime.messages' daily partitions once the service is in
+  -- use; before that, broadcasts are dropped and those checks report SKIP.
+  realtime_ready boolean := exists (
+    select 1 from pg_inherits i
+    join pg_class p on p.oid = i.inhparent
+    join pg_namespace ns on ns.oid = p.relnamespace
+    where ns.nspname = 'realtime' and p.relname = 'messages');
   names  text[]    := '{}';
   passes boolean[] := '{}';
 begin
@@ -108,7 +115,16 @@ begin
   get diagnostics n = row_count;
   names := array_append(names, 'outsider cannot edit other group''s event');
   passes := passes || (n = 0);
+
+  perform set_config('realtime.topic', 'group:' || gb, true);
+  names := array_append(names, 'outsider cannot receive other group''s live updates');
+  passes := passes || case when realtime_ready
+    then not exists (select 1 from realtime.messages where topic = 'group:' || gb) end;
   reset role;
+
+  names := array_append(names, 'event changes are broadcast on the group channel');
+  passes := passes || case when realtime_ready
+    then exists (select 1 from realtime.messages where topic = 'group:' || gb and event = 'INSERT') end;
 
   -- ---------------------------------------------------------------- as anonymous
   set local role anon;
@@ -168,6 +184,18 @@ begin
   get diagnostics n = row_count;
   names := array_append(names, 'member cannot edit someone else''s event');
   passes := passes || (n = 0);
+
+  ok := false;
+  begin
+    perform public.update_event(eb, 'hacked', now(), null, false, null, null);
+  exception when no_data_found then ok := true;
+  end;
+  names := array_append(names, 'member cannot edit someone else''s event via update_event');
+  passes := passes || ok;
+
+  names := array_append(names, 'member receives the group''s live updates');
+  passes := passes || case when realtime_ready
+    then exists (select 1 from realtime.messages where topic = 'group:' || gb) end;
 
   delete from public.group_members where group_id = gb and user_id = bob;
   get diagnostics n = row_count;
@@ -254,6 +282,13 @@ begin
 
   names := array_append(names, 'group members see saved messages from others');
   passes := passes || exists (select 1 from public.parsed_messages where id = ma);
+
+  perform public.update_event(eb, 'Bob dinner (moved)', '2030-02-01T19:00:00Z', '2030-02-01T21:00:00Z',
+    false, 'Home', array[bob]);
+  names := array_append(names, 'creator can edit event and participants with update_event');
+  passes := passes || (
+    exists (select 1 from public.events where id = eb and title = 'Bob dinner (moved)' and location = 'Home')
+    and (select array_agg(user_id) from public.event_participants where event_id = eb) = array[bob]);
   reset role;
 
   -- ---------------------------------------------------------------- cleanup (admin)
@@ -266,7 +301,7 @@ end;
 $$;
 
 select
-  case when passed then 'PASS' else 'FAIL' end as result,
+  case when passed then 'PASS' when passed is null then 'SKIP' else 'FAIL' end as result,
   check_name
 from rls_results
 order by ord;
