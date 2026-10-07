@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
+import { Button } from '@/components/form';
 import { Segmented } from '@/components/segmented';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -117,6 +118,11 @@ export function GroupCalendar({ groupId, timeZone, version }: Props) {
           ]}
           value={mode}
           onChange={setMode}
+        />
+        <Button
+          title="Find a time"
+          variant="secondary"
+          onPress={() => router.push({ pathname: '/groups/[id]/find-time', params: { id: groupId } })}
         />
         {mode === 'week' && (
           <ThemedView style={styles.weekNav}>

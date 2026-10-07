@@ -317,6 +317,31 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      busy_times: {
+        Args: {
+          p_from: string
+          p_place?: string
+          p_to: string
+          p_user_ids: string[]
+        }
+        Returns: {
+          end_at: string
+          start_at: string
+          user_id: string
+        }[]
+      }
+      create_event: {
+        Args: {
+          p_all_day: boolean
+          p_end_at: string
+          p_group_id: string
+          p_location: string
+          p_participant_ids: string[]
+          p_start_at: string
+          p_title: string
+        }
+        Returns: string
+      }
       invite_preview: {
         Args: { invite_code: string }
         Returns: {

@@ -22,6 +22,7 @@ declare
   ma uuid;  -- Alice's parsed message in gb
   mb uuid;  -- Bob's draft message in gb
   saved uuid;
+  created uuid;
   ib text;  -- Bob's valid invite code
   ix text;  -- an expired invite code for gb
   gid uuid;
@@ -116,6 +117,17 @@ begin
   names := array_append(names, 'outsider cannot edit other group''s event');
   passes := passes || (n = 0);
 
+  names := array_append(names, 'outsider cannot read a stranger''s busy times');
+  passes := passes || not exists (select 1 from public.busy_times(array[bob], now() - interval '1 day', now() + interval '1 day'));
+
+  ok := false;
+  begin
+    perform public.create_event(gb, 'intrusion', now(), now() + interval '1 hour', false, null, null);
+  exception when insufficient_privilege then ok := true;
+  end;
+  names := array_append(names, 'outsider cannot create an event in other group (create_event)');
+  passes := passes || ok;
+
   perform set_config('realtime.topic', 'group:' || gb, true);
   names := array_append(names, 'outsider cannot receive other group''s live updates');
   passes := passes || case when realtime_ready
@@ -144,6 +156,11 @@ begin
   names := array_append(names, 'logged-out client cannot use an invite');
   passes := passes || ok;
   reset role;
+
+  -- Bob's all-day events: a trip with a location, and a birthday without one.
+  insert into public.events (group_id, created_by, title, start_at, end_at, all_day, location) values
+    (gb, bob, 'Week-end à Lyon', '2030-03-01T00:00:00Z', '2030-03-03T00:00:00Z', true, 'Lyon'),
+    (gb, bob, 'Birthday', '2030-04-01T00:00:00Z', '2030-04-02T00:00:00Z', true, null);
 
   -- ---------------------------------------------------------------- Alice joins Bob's group with the invite
   set local role authenticated;  -- claims still Alice
@@ -192,6 +209,23 @@ begin
   end;
   names := array_append(names, 'member cannot edit someone else''s event via update_event');
   passes := passes || ok;
+
+  names := array_append(names, 'busy times: group mate''s timed event is busy (no details exposed)');
+  passes := passes || exists (select 1 from public.busy_times(array[bob], now() - interval '1 day', now() + interval '1 day')
+    where user_id = bob);
+
+  names := array_append(names, 'busy times: a trip blocks, except for plans in the same place');
+  passes := passes || (
+    exists (select 1 from public.busy_times(array[bob], '2030-03-01T10:00Z', '2030-03-01T12:00Z'))
+    and exists (select 1 from public.busy_times(array[bob], '2030-03-01T10:00Z', '2030-03-01T12:00Z', 'Paris'))
+    and not exists (select 1 from public.busy_times(array[bob], '2030-03-01T10:00Z', '2030-03-01T12:00Z', 'lyon')));
+
+  names := array_append(names, 'busy times: all-day event without location never blocks');
+  passes := passes || not exists (select 1 from public.busy_times(array[bob], '2030-04-01T10:00Z', '2030-04-01T12:00Z'));
+
+  created := public.create_event(gb, 'Picnic', '2030-05-01T10:00Z', '2030-05-01T12:00Z', false, 'Parc', array[alice, bob]);
+  names := array_append(names, 'member can create an event with participants (create_event)');
+  passes := passes || ((select count(*) from public.event_participants where event_id = created) = 2);
 
   names := array_append(names, 'member receives the group''s live updates');
   passes := passes || case when realtime_ready

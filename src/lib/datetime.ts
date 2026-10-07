@@ -4,14 +4,14 @@ import {
   dateToUtcMidnight as dayToUtc,
   utcMidnightToDate as utcToDay,
   utcToWall as toWall,
-} from '../../supabase/functions/_shared/zoned-time';
+} from '@shared/zoned-time.ts';
 export {
   addDays,
   dateToUtcMidnight,
   utcMidnightToDate,
   utcToWall,
   wallToUtc,
-} from '../../supabase/functions/_shared/zoned-time';
+} from '@shared/zoned-time.ts';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

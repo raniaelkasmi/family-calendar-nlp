@@ -46,10 +46,10 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test 'supabase/functions/**/*.test.ts'",
     "db:push": "supabase db push",
     "db:types": "supabase gen types typescript --linked > src/lib/database.types.ts",
     "db:test": "supabase db query --linked -f supabase/tests/rls_check.sql",
-    "test:parser": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test supabase/functions/parse-message/parse.test.ts",
     "eval": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON supabase/functions/parse-message/eval/run.ts",
     "functions:deploy": "supabase functions deploy parse-message --use-api"
   },
