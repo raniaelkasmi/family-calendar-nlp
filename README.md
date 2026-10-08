@@ -6,6 +6,14 @@ A shared calendar app for family and friends where people write plans the way th
 
 Built as a personal project used by my family, and as a data science project. Every message, what the model understood and what the user corrected are logged as a labeled dataset for measuring parsing accuracy.
 
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/feed.png" width="270" alt="Group feed: plans written in natural language become events"><br><sub>Feed: messages become events</sub></td>
+    <td align="center"><img src="docs/screenshots/calendar.png" width="270" alt="Week view of the shared calendar"><br><sub>Shared calendar, live-updated</sub></td>
+    <td align="center"><img src="docs/screenshots/find-a-time.png" width="270" alt="Find a time: three suggested evening slots"><br><sub>Find a time</sub></td>
+  </tr>
+</table>
+
 **Stack:** React Native (Expo, TypeScript) · Supabase (Postgres with Row Level Security, Auth, Realtime, Edge Functions on Deno) · Google Gemini (Flash-Lite)
 
 ## Features
@@ -55,6 +63,8 @@ Caveats, stated plainly:
 - The set is small and was written by me, so it measures whether the parser handles the expressions I designed it for, not real-world accuracy.
 - LLM outputs vary between runs. A borderline case ("Qui veut venir ce soir ?", confidence exactly at the threshold) passed in one run and failed in another.
 - v2 changed the rule for ambiguous "next <weekday>" to ask rather than guess. The test for that case accepts either date as long as the question is raised.
+
+A real example from the app: for *"Samedi halloween"* (sent on a Thursday), the model returned confidence 0.50 and asked *"S'agit-il du samedi 10 octobre ou du samedi 31 octobre ?"*, instead of silently picking a date. The user kept the 10th and added a location, and the dataset recorded `was_corrected = true` with `corrected_fields = ["location"]`.
 
 **Real-world accuracy** comes from the in-app dataset instead. Each message stores the raw model output, the normalized event, the prompt and model versions, the latency, the user's decision (saved or discarded), and, when the user edited the draft, the exact fields they corrected. Analyzing that dataset is the next step of the project.
 
