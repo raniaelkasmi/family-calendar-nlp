@@ -166,7 +166,7 @@ export function GroupCalendar({ groupId, timeZone, version }: Props) {
                   onPress={() => router.push({ pathname: '/groups/[id]/events/[eventId]', params: { id: groupId, eventId: e.id } })}>
                   {({ pressed }) => (
                     <ThemedView type="backgroundElement" style={[styles.event, { borderLeftColor: theme.primary }, pressed && styles.pressed]}>
-                      <ThemedText type="small" themeColor="textSecondary" style={styles.time}>
+                      <ThemedText type="small" themeColor="textSecondary" style={styles.time} numberOfLines={1}>
                         {e.all_day ? 'all day' : formatTime(new Date(e.start_at), timeZone)}
                       </ThemedText>
                       <ThemedView style={styles.eventBody}>
@@ -221,7 +221,8 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
   },
   time: {
-    width: 52,
+    // Wide enough for "10:30 PM" (12-hour locales) on one line.
+    width: 72,
   },
   eventBody: {
     flex: 1,
