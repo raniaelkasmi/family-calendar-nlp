@@ -52,7 +52,8 @@
     "db:types": "supabase gen types typescript --linked > src/lib/database.types.ts",
     "db:test": "supabase db query --linked -f supabase/tests/rls_check.sql",
     "eval": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON supabase/functions/parse-message/eval/run.ts",
-    "functions:deploy": "supabase functions deploy parse-message --use-api"
+    "functions:deploy": "supabase functions deploy parse-message --use-api",
+    "release": "npx eas-cli@latest update --channel production --environment production --platform ios"
   },
   "private": true
 }
